@@ -50,11 +50,22 @@ pub fn get_availabilities_by_vehicle_type(vechicle_type: &str) -> Result<String,
         Err(error) => panic!()
     };
 
-    let resp: String = serde_json::to_string(&resp)?;
+    let mut new_resp = vec![];
+    for mut r in resp.into_iter() {
+        let resp_tot_reserved = get_total_vehicle_in_block(r.id);
 
-    println!("{}", resp);
+        let tot_reserved: i64 = match resp_tot_reserved {
+            Ok(a) => a,
+            Err(_) => 0
+        };
 
-    Ok(resp)
+        r.availability = r.availability - tot_reserved;
+        new_resp.push(r);
+    }
+
+    let new_resp: String = serde_json::to_string(&new_resp)?;
+
+    Ok(new_resp)
 }
 
 

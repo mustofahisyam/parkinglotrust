@@ -78,10 +78,11 @@ pub fn create_block(request: RequestBlock) -> Result<Block> {
 
 #[derive(Serialize, Deserialize)]
 pub struct AvailabilitiesVehicleType {
-    name: String,
-    availability: i32,
-    hourly_rate: i64,
-    floor: i8
+    pub id: i64,
+    pub name: String,
+    pub availability: i64,
+    pub hourly_rate: i64,
+    pub floor: i8
 }
 
 
@@ -90,14 +91,15 @@ pub fn get_block_availability_by_vehicle_type(vehicle_type_input: &str) -> Resul
 
     let mut availabilities = vec![];
 
-    let mut stmt = conn.prepare("SELECT name, availability, hourly_rate, floor FROM block WHERE vehicle_type = :vehicle_type;")?;
+    let mut stmt = conn.prepare("SELECT id, name, availability, hourly_rate, floor FROM block WHERE vehicle_type = :vehicle_type;")?;
 
     let availability_iter = stmt.query_map(&[(":vehicle_type", vehicle_type_input)], |row| {
         Ok(AvailabilitiesVehicleType {
-            name: row.get(0)?,
-            availability: row.get(1)?,
-            hourly_rate: row.get(2)?,
-            floor: row.get(3)?
+            id: row.get(0)?,
+            name: row.get(1)?,
+            availability: row.get(2)?,
+            hourly_rate: row.get(3)?,
+            floor: row.get(4)?
         })
     })?;
 
